@@ -81,8 +81,11 @@ public class ProductService {
 		rating.setUser(user);
 
 		Rating savedRating = ratingRepository.save(rating);
+		
+		Product updatedProduct = productRepository.findById(productId)
+	            .orElseThrow(() -> new NotFoundException(ExceptionMessages.PRODUCT_NOT_FOUND));
 
-		updateProductRating(product);
+		updateProductRating(updatedProduct);
 		return mapper.ratingEntityToDto(savedRating);
 
 	}
@@ -93,6 +96,7 @@ public class ProductService {
 		int count = 0;
 
 		for (Rating rating : ratings) {
+			
 			sum += rating.getRating();
 			count++;
 		}

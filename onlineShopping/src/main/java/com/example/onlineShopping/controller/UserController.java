@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.onlineShopping.dao.entity.User;
 import com.example.onlineShopping.repository.UserRepository;
+import com.example.onlineShopping.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,9 +16,12 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	@PostMapping
 	public User createUser(@RequestBody User user) {
-		return userRepository.save(user);
+		return userService.createUser(user);
 	}
 }

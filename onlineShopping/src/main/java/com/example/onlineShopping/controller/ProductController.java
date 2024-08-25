@@ -57,9 +57,8 @@ public class ProductController {
 	}
 
 	@PostMapping("/{productId}/ratings")
-	public RatingDto addRatingToProduct(@PathVariable("productId") Long productId, @RequestParam("userId") Long userId,
-			@RequestParam("value") Double value, @RequestParam("comment") String comment) {
-		return productService.addRatingToProduct(productId, userId, value, comment);
+	public RatingDto addRatingToProduct(@PathVariable("productId") Long productId, @RequestBody RatingDto ratingDto) {
+		return productService.addRatingToProduct(productId, ratingDto.getUserId(), ratingDto.getRating(), ratingDto.getComment());
 	}
 
 	@GetMapping("/{productId}/ratings")
