@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.onlineShopping.repository.BasketRepository;
 import com.example.onlineShopping.repository.CouponRepository;
 import com.example.onlineShopping.repository.CourierRepository;
 import com.example.onlineShopping.repository.OrderRepository;
@@ -59,16 +58,12 @@ public class OrderService {
 		Double totalPrice = calculateTotalPrice(basket);
 
 		if (couponCode != null && !couponCode.isEmpty()) {
-			Optional<Coupon> optionalCoupon = couponRepository.findByCode(couponCode);
-			if (optionalCoupon.isPresent()) {
-				Coupon coupon = optionalCoupon.get();
-				if (isCouponValid(coupon)) {
-					totalPrice = applyDiscount(totalPrice, coupon);
-				} else {
-					System.out.println("Coupon is expired or not valid.");
-				}
+			Coupon coupon = couponRepository.findByCode(couponCode)
+					.orElseThrow(() -> new NotFoundException("Coupon not found"));
+			if (isCouponValid(coupon)) {
+				totalPrice = applyDiscount(totalPrice, coupon);
 			} else {
-				System.out.println("Coupon not found.");
+				throw new NotFoundException("Coupon is expired or not valid");
 			}
 		}
 
@@ -76,7 +71,7 @@ public class OrderService {
 		Order order = new Order();
 		order.setUser(user);
 		order.setProducts(selectedProducts);
-		order.setStatus(Status.SOLD);
+		order.setStatus(Status.DELIVERING);
 		order.setTotalPrice(totalPrice);
 
 		orderRepository.save(order);
@@ -117,6 +112,7 @@ public class OrderService {
 		}
 		Order order = optionalOrder.get();
 		Courier courier = optionalCourier.get();
+		courier.setCourierStatus(CourierStatus.ON_THE_WAY);
 		order.setCourier(courier);
 		order.setStatus(Status.DELIVERING);
 		orderRepository.save(order);

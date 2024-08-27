@@ -15,9 +15,6 @@ import com.example.onlineShopping.service.UserService;
 public class UserController {
 
 	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
 	private UserService userService;
 
 	@PostMapping

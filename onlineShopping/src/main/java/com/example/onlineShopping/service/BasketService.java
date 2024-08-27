@@ -1,6 +1,7 @@
 package com.example.onlineShopping.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 import com.example.onlineShopping.dao.entity.Basket;
 import com.example.onlineShopping.dao.entity.Product;
 import com.example.onlineShopping.dao.entity.User;
+import com.example.onlineShopping.exceptions.NotFoundException;
 import com.example.onlineShopping.helper.UserHelper;
 import com.example.onlineShopping.mapper.Mapper;
 import com.example.onlineShopping.model.BasketDto;
 import com.example.onlineShopping.repository.BasketRepository;
 import com.example.onlineShopping.repository.ProductRepository;
+import com.example.onlineShopping.repository.UserRepository;
 
 @Service
 public class BasketService {
@@ -24,6 +27,9 @@ public class BasketService {
 
 	@Autowired
 	private UserHelper userHelper;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private ProductRepository productRepository;
@@ -51,6 +57,17 @@ public class BasketService {
 		basket.get().setProducts(selectedProducts);
 		basketRepository.save(basket.get());
 		return basket.get();
+	}
+
+	public Basket createBasket(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new NotFoundException("User not found with ID: " + userId));
+		Basket basket = new Basket();
+		basket.setUser(user);
+		basket.setProducts(new ArrayList<>());
+		setExpireDate(basket);
+
+		return basketRepository.save(basket);
 	}
 
 	private void setExpireDate(Basket basket) {

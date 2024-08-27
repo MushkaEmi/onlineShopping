@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,8 +27,13 @@ public class BasketController {
 		return basketService.findByUserId(userId);
 	}
 
-	@PostMapping("/{userId}/products")
+	@PutMapping("/{userId}/products")
 	public Basket addProductToBasket(@PathVariable("userId") Long userId, @RequestBody List<Long> productIds) {
 		return basketService.addProductToBasket(userId, productIds);
+	}
+
+	@PostMapping("/{userId}/baskets")
+	public Basket createBasket(@PathVariable("userId") Long userId) {
+		return basketService.createBasket(userId);
 	}
 }
